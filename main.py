@@ -3,7 +3,7 @@ import os
 from os.path import isfile, join
 
 
-class Ren:
+class Renamer:
     def __init__(self):
         self.path = ''
         self.files = []
@@ -55,7 +55,7 @@ class Ren:
     def save_num_len(self):
         self.max_len = 0
         for file in self.files:
-            current_len = len(file.split(self.file_name_seperator)) # [self.num_index].strip()[self.num_start:])
+            current_len = len(file.split(self.file_name_seperator))  # [self.num_index].strip()[self.num_start:])
             if self.max_len < current_len:
                 self.max_len = current_len
 
@@ -134,7 +134,7 @@ class Ren:
 
 
 if __name__ == '__main__':
-    obj = Ren()
-    obj.ask_user_data()
-    obj.rename_all()
-    print(f'Renamed {len(obj.files)} files!')
+    ren = Renamer()
+    ren.ask_user_data()
+    ren.rename_all()
+    print(f'Renamed {len(ren.files)} files!')
