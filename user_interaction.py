@@ -1,55 +1,140 @@
 import re
+import os
+from os.path import isfile, join
 
-path = input('Please enter full path to directory >')
 
-if path.find('\\'):
-    path = path.replace('\\', '\\\\')
+class Ren:
+    def __init__(self):
+        self.path = ''
+        self.files = []
 
-first_file_name = 'Python3! - ##!2 - ImportantStuff - DeleteThis - NotImportant'
+    @staticmethod
+    def split_strip(str_param, seps):
+        str_list = re.split(seps, str_param)
+        str_list = [item.strip() for item in str_list]
+        return str_list
 
-print(f'name of first file is \'{first_file_name}\'')
+    def split_strip_user(self, str_param, seps):
+        str_list = re.split(seps, str_param)
+        str_list = [item.strip() for item in str_list]
+        self.file_extension = str_list[-1]
+        str_list.remove(str_list[-1])
+        return str_list
 
-file_name_seperator = input('Enter seperator >')
+    @staticmethod
+    def convert_list_str2int(str_):
+        for idx, val in enumerate(str_):
+            str_[idx] = int(val)
+        return str_
 
-first_file_name = first_file_name.split(file_name_seperator)
+    @staticmethod
+    def create_empty_list(len_):
+        list_ = []
+        for i in range(len_):
+            list_.append('')
+        return list_
 
-for idx, fns in enumerate(first_file_name):
-    first_file_name[idx] = first_file_name[idx].strip()
+    def save_files(self):
+        self.files = [f for f in os.listdir(self.path) if isfile(join(self.path, f))]
 
-idx_output = ''
-for idx, fns in enumerate(first_file_name):
-    idx_output += f'\'{fns}\' [{idx}]' if idx == 0 else f' | \'{fns}\' [{idx}]'
+    def save_path(self):
+        self.path = input('Please enter full path to directory >')
+        if self.path.find('\\'):
+            path = self.path.replace('\\', '\\\\')
+        os.chdir(self.path)
 
-print(idx_output)
+    def save_seperator(self):
+        self.file_name_seperator = input('Enter seperator >') + '|°'
 
-number_idx = int(input('Enter index of number to sort >'))
+    def save_num_index(self):
+        self.num_index = int(input('Enter index of number to sort >'))
 
-len_chars_before_num = input('Enter chars in front of number >')
+    def save_num_start(self):
+        self.num_start = len(input('Enter chars in front of number >'))
 
-print(f'The first number is {first_file_name[number_idx][len_chars_before_num:]}')
+    def save_num_len(self):
+        self.max_len = 0
+        for file in self.files:
+            current_len = len(file.split(self.file_name_seperator)) # [self.num_index].strip()[self.num_start:])
+            if self.max_len < current_len:
+                self.max_len = current_len
 
-new_order_raw = input('Sort indexes to new indexes >')
+    def save_fill_with_zeros(self):
+        self.fill_with_zeros = bool(input('Fill space before number with zeros? >'))
 
-print(new_order := re.split('->|,', new_order_raw))
+    def get_formatted_number(self, splitted_file_name):
+        if self.fill_with_zeros:
+            return splitted_file_name[self.num_index][self.num_start:].zfill(self.max_len)
+        else:
+            return splitted_file_name[self.num_index][self.num_start:]
 
-for idx, no in enumerate(new_order):
-    new_order[idx] = int(no)
+    def save_process_index_order(self):
+        new_order_raw = input('Sort indexes to new indexes >')
+        self.new_order = re.split('->|,', new_order_raw)
+        for idx, no in enumerate(self.new_order):
+            self.new_order[idx] = int(no)
 
-new_name_list = []
-for i in range(len(new_order) // 2):
-    new_name_list.append('')
+    def sort_new_name(self, file_name_splitted):
+        name_list = self.create_empty_list(len(self.new_order) // 2)
+        for idx_old, idx_new in zip(self.new_order[::2], self.new_order[1::2]):
+            if idx_old == self.num_index and self.fill_with_zeros:
+                name_list[idx_new] = file_name_splitted[idx_old][self.num_start:].zfill(self.max_len)
+            else:
+                name_list[idx_new] = file_name_splitted[idx_old]
+        # name_list.append(file_name_splitted[-1])
+        return name_list
 
-for idx_old, idx_new in zip(new_order[::2], new_order[1::2]):
-    new_name_list[idx_new] = first_file_name[idx_old]
+    def format_new_name(self, splitted_file_name):
+        new_name = ''
+        for idx, nol in enumerate(self.sort_new_name(splitted_file_name)):
+            new_name += f'{nol}' if idx == 0 else f'**{nol}'
+        return new_name + '.' + self.file_extension
 
-new_name = ''
-for idx, nol in enumerate(new_name_list):
-    new_name += f'{nol}' if idx == 0 else f'^{nol}'
+    def save_new_name_seperator(self):
+        self.new_name_seperator = input('Enter seperator instead of \'**\' >')
 
-print(new_name)
+    def replace_new_name_stars(self, new_name):
+        return new_name.replace('**', self.new_name_seperator)
 
-sep_final = input('Any seperators instead of \'^\'? >')
+    def ask_user_data(self):
+        self.save_path()
+        self.save_files()
+        first_file_name = self.files[0]
+        print(f'name of first file is \'{first_file_name}\'')
+        first_file_name = first_file_name.replace('.', '°')
+        self.save_seperator()
+        first_file_name = self.split_strip_user(first_file_name, self.file_name_seperator)
+        idx_output = ''
+        for idx, fns in enumerate(first_file_name):
+            idx_output += f'\'{fns}\' [{idx}]' if idx == 0 else f' | \'{fns}\' [{idx}]'
+        print(idx_output)
+        self.save_num_index()
+        self.save_num_start()
+        self.save_fill_with_zeros()
+        self.save_num_len()
+        print(f'The first number is {self.get_formatted_number(first_file_name)}')
+        self.save_process_index_order()
+        new_name = self.format_new_name(first_file_name)
+        print(new_name)
+        self.save_new_name_seperator()
+        new_name = self.replace_new_name_stars(new_name)
+        print(new_name)
 
-new_name = new_name.replace('^', sep_final)
+    def rename_(self, file_name):
+        orig_file_name = file_name
+        file_name = file_name.replace('.', '°')
+        splitted_file_name = self.split_strip(file_name, self.file_name_seperator)
+        new_name = self.format_new_name(splitted_file_name)
+        new_name = self.replace_new_name_stars(new_name)
+        os.rename(orig_file_name, new_name)
 
-print(new_name)
+    def rename_all(self):
+        for file in self.files:
+            self.rename_(file)
+
+
+if __name__ == '__main__':
+    obj = Ren()
+    obj.ask_user_data()
+    obj.rename_all()
+    print(f'Renamed {len(obj.files)} files!')

@@ -17,12 +17,13 @@ class Renamer:
 
 
 def create_test_files():
-    for i in range(100):
-        with open(f'C:\\RenameDir\\#{i} - DELETEDELETEDELETE - IMPORTANT{i}', 'w+'):
+    for i in range(1001):
+        with open(f'C:\\RenameDir\\Python3! - ##!{i} - ImportantStuff - DeleteThis - NotImportant.txt', 'w+'):
             pass
 
 
 if __name__ == "__main__":
     ren = Renamer('C:\\RenameDir')
+    create_test_files()
     print(ren.save_files())
     ren.main()
