@@ -1,10 +1,22 @@
-import re
-
-
-def split_strip(str_param, seps):
-    str_list = re.split(seps, str_param)
-    str_list = [item.strip() for item in str_list]
-    return str_list
+def split_strip(str_param, sep):
+    str_param += ' '
+    if sep == '+':
+        str_list = []
+        index = 0
+        while index < len(str_param):
+            prev_index = index
+            index = str_param.find('+', index)
+            str_list.append(str_param[prev_index:index])
+            if index == -1:
+                break
+            index += 1
+        str_list = [item.strip() for item in str_list]
+        # str_list.remove(str_list[-1])
+        return str_list
+    else:
+        str_list = str_param.split(sep)
+        str_list = [item.strip() for item in str_list]
+        return str_list
 
 
 def create_empty_list(len_):
@@ -35,7 +47,7 @@ def format_new_name(obj, splitted_file_name):
 
 
 def replace_new_name_stars(obj, new_name):
-    return new_name.replace('**', obj.new_name_seperator)
+    return new_name.replace('**', obj.new_name_delimiter)
 
 
 def sort_new_name(obj, file_name_splitted):

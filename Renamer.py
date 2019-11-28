@@ -16,8 +16,8 @@ class Renamer:
             self.rename_(file)
 
     def get_new_name(self, file_name):
-        file_name = file_name.replace('.', '°')
-        splitted_file_name = Utils.split_strip(file_name, self.vals.file_name_seperator)
+        file_name = file_name.replace('.', self.vals.file_name_delimiter)
+        splitted_file_name = Utils.split_strip(file_name, self.vals.file_name_delimiter)
         new_name = Utils.format_new_name(self.vals, splitted_file_name)
         new_name = Utils.replace_new_name_stars(self.vals, new_name)
         return new_name
