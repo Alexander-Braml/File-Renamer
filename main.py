@@ -7,6 +7,14 @@ class Renamer:
     def __init__(self):
         self.path = ''
         self.files = []
+        self.file_extension = ''
+        self.file_name_seperator = ''
+        self.num_index = 0
+        self.num_start = 0
+        self.fill_with_zeros = False
+        self.new_order = []
+        self.new_name_seperator = ''
+        self.max_len = 0
 
     @staticmethod
     def split_strip(str_param, seps):
@@ -40,7 +48,7 @@ class Renamer:
     def save_path(self):
         self.path = input('Please enter full path to directory >')
         if self.path.find('\\'):
-            path = self.path.replace('\\', '\\\\')
+            self.path = self.path.replace('\\', '\\\\')
         os.chdir(self.path)
 
     def save_seperator(self):
@@ -70,9 +78,8 @@ class Renamer:
 
     def save_process_index_order(self):
         new_order_raw = input('Sort indexes to new indexes >')
-        self.new_order = re.split('->|,', new_order_raw)
-        for idx, no in enumerate(self.new_order):
-            self.new_order[idx] = int(no)
+        for idx, no in enumerate(re.split('->|,', new_order_raw)):
+            self.new_order.append(int(no))
 
     def sort_new_name(self, file_name_splitted):
         name_list = self.create_empty_list(len(self.new_order) // 2)
@@ -81,7 +88,6 @@ class Renamer:
                 name_list[idx_new] = file_name_splitted[idx_old][self.num_start:].zfill(self.max_len)
             else:
                 name_list[idx_new] = file_name_splitted[idx_old]
-        # name_list.append(file_name_splitted[-1])
         return name_list
 
     def format_new_name(self, splitted_file_name):
