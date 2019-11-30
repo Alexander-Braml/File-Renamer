@@ -33,10 +33,11 @@ def convert_list_str2int(str_):
 
 
 def get_formatted_number(obj, splitted_file_name):
+    val = str(int(splitted_file_name[obj.num_index][obj.num_start:]))
     if obj.fill_with_zeros:
-        return splitted_file_name[obj.num_index][obj.num_start:].zfill(obj.max_len)
+        return val.zfill(obj.max_len)
     else:
-        return splitted_file_name[obj.num_index][obj.num_start:]
+        return val
 
 
 def format_new_name(obj, splitted_file_name):
@@ -51,10 +52,14 @@ def replace_new_name_stars(obj, new_name):
 
 
 def sort_new_name(obj, file_name_splitted):
-    name_list = create_empty_list(len(obj.new_order) // 2)
+    name_list = create_empty_list(int(len(obj.new_order) / 2))
     for idx_old, idx_new in zip(obj.new_order[::2], obj.new_order[1::2]):
-        if idx_old == obj.num_index and obj.fill_with_zeros:
-            name_list[idx_new] = file_name_splitted[idx_old][obj.num_start:].zfill(obj.max_len)
+        if idx_old == obj.num_index:
+            val = str(int(file_name_splitted[idx_old][obj.num_start:]))
+            if obj.fill_with_zeros:
+                name_list[idx_new] = val.zfill(obj.max_len)
+            else:
+                name_list[idx_new] = val
         else:
             name_list[idx_new] = file_name_splitted[idx_old]
     return name_list
