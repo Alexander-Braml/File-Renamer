@@ -62,10 +62,8 @@ Steps to automated renaming:
         valid = False
         while not valid:
             tmp = input('Please enter full path to directory >')
-            if tmp.upper() == 'H' or tmp == '?' or tmp.upper() == 'HELP':
-                print(self.help)
+            if self._help(tmp):
                 valid = False
-                continue
             else:
                 try:
                     chdir(tmp)
@@ -91,7 +89,9 @@ Steps to automated renaming:
         valid = False
         while not valid:
             tmp = input('Enter delimiter >')
-            if first_file_name.find(tmp) == -1:
+            if self._help(tmp):
+                valid = False
+            elif first_file_name.find(tmp) == -1:
                 print('Could not find delimiter in String! Try another delimiter!')
                 valid = False
             elif tmp == '':
@@ -131,6 +131,9 @@ Steps to automated renaming:
         valid = False
         while not valid:
             tmp = input('Enter index of number to sort >')
+            if self._help(tmp):
+                valid = False
+                continue
             try:
                 tmp_int = int(tmp)
             except ValueError:
@@ -174,7 +177,9 @@ Steps to automated renaming:
         valid = False
         while not valid:
             tmp = input('Fill space before number with zeros? (y/n) >')
-            if tmp == 'y':
+            if self._help(tmp):
+                valid = False
+            elif tmp == 'y':
                 self.vals.fill_with_zeros = True
                 valid = True
             elif tmp == 'n':
@@ -195,25 +200,42 @@ Steps to automated renaming:
             tmp = []
             splitted = re.split('->|,', new_order_raw)
             len_ = len(splitted)
-            if len_ % 2 != 0:
+            if self._help(new_order_raw):
+                valid = False
+                continue
+            elif len_ % 2 != 0:
                 print('Length is not even!')
                 valid = False
                 continue
             for idx, no in enumerate(splitted):
-                try:
-                    num = int(no)
-                    if num >= int(len_ / 2):
-                        print('Indexes can\'t be greater than length of new name!')
+                if idx % 2 != 0:
+                    try:
+                        num = int(no)
+                        if num > int(len_ / 2):
+                            print('Indexes can\'t be greater than length of new name!')
+                            valid = False
+                            break
+                        else:
+                            valid = True
+                    except ValueError:
+                        print('All indexes need to be numbers!')
                         valid = False
                         break
-                    else:
-                        valid = True
-                except ValueError:
-                    print('All indexes need to be numbers!')
-                    valid = False
-                    break
                 tmp.append(int(no))
         self.vals.new_order = tmp
 
     def save_new_name_delimiter(self):
-        self.vals.new_name_delimiter = input('Enter delimiter instead of \'**\' >')
+        valid = False
+        while not valid:
+            tmp = input('Enter delimiter instead of \'**\' >')
+            if self._help(tmp):
+                valid = False
+            else:
+                self.vals.new_name_delimiter = tmp
+                valid = True
+
+    def _help(self, tmp):
+        if tmp.upper() == 'H' or tmp == '?' or tmp.upper() == 'HELP':
+            print(self.help)
+            return True
+        return False
